@@ -37,9 +37,28 @@ cp "Project 1/Assignment 6/p1_travel.py" "$TEMP_DIR/" || { echo "Error: p1_trave
 
 # Update author name in copied files
 echo "Updating author name in copied files..."
-find "$TEMP_DIR" -name '*.py' -print0 | while IFS= read -r -d '' file; do
-  sed -i "s|^# Author:.*$|# Author: $AUTHOR_NAME|" "$file"
-done
+python3 - "$AUTHOR_NAME" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+author = sys.argv[1]
+for path in Path('project_01_temp').glob('*.py'):
+    text = path.read_text()
+    lines = text.splitlines()
+    updated = False
+    for i, line in enumerate(lines):
+        if re.match(r'^\s*(#\s*)?Author:', line):
+            lines[i] = f'# Author: {author}'
+            updated = True
+            break
+    if not updated:
+        if lines and lines[0].startswith(("'''", '"""')):
+            lines.insert(1, f'# Author: {author}')
+        else:
+            lines.insert(0, f'# Author: {author}')
+    path.write_text('\n'.join(lines) + '\n')
+PY
 
 # Create zip file
 echo "Creating zip file..."

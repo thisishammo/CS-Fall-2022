@@ -1,0 +1,64 @@
+name: Generate Project Zip
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Make generate-zip.sh executable
+        run: chmod +x ./generate-zip.sh
+
+      - name: Run generate-zip.sh with author CLI argument
+        run: |
+          AUTHOR_NAME="GitHub Actions"
+          ./generate-zip.sh "$AUTHOR_NAME"
+
+      - name: Unzip generated archive
+        run: |
+          rm -f p1_*.py || true
+          unzip -o project_01.zip
+
+      - name: Replace local p1_*.py files from archive
+        run: |
+          for file in p1_*.py; do
+            if [[ -f "$file" ]]; then
+              cp "$file" "Project 1/Assignment "$(basename "$file" .py | sed 's/p1_//g' | awk '{print int($1)}')"/$file" 2>/dev/null || true
+            fi
+          done
+
+      - name: Verify author CLI compliance
+        run: |
+          if ! grep -R "^# Author: GitHub Actions" p1_*.py; then
+            echo "Author CLI compliance failed" >&2
+            exit 1
+          fi
+
+      - name: Host temporary server for download
+        run: |
+          if ! command -v python3 >/dev/null; then
+            echo "Python 3 is required" >&2
+            exit 1
+          fi
+          nohup python3 -m http.server 8000 >/tmp/server.log 2>&1 &
+          sleep 2
+          echo "Server started at http://127.0.0.1:8000"
+          echo "Download project_01.zip from the URL above"
+
+      - name: Shutdown temporary server
+        run: |
+          if pgrep -f "python3 -m http.server 8000" >/dev/null; then
+            pkill -f "python3 -m http.server 8000"
+          fi
