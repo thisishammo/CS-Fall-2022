@@ -1,9 +1,13 @@
 # CS 122 Fall 2020 Assignment 1
-# Author: Hammond
+# Author: Provided at runtime via command line argument
 # Credit: 
 # Description: Introduction to programming problem set uses Python numeric data types and operations to solve a variety of small problems.
 
 import math
+import sys
+
+author = sys.argv[1] if len(sys.argv) > 1 else input("Enter author name: ")
+print("Author:", author)
 
 print("Question 1")
 print("------------------------------------------")
