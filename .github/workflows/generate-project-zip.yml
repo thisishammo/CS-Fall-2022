@@ -1,0 +1,63 @@
+name: Generate Project 01 Zip File
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Project 1/**/*.py'
+      - '.github/workflows/generate-project-zip.yml'
+  workflow_dispatch:
+
+jobs:
+  generate-zip:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Create zip file with all Python files
+        run: |
+          cd "${{ github.workspace }}"
+          mkdir -p project_01_temp
+          
+          # Copy all required Python files
+          cp "Project 1/Assignment 1/p1_slices.py" project_01_temp/
+          cp "Project 1/Assignment 2/p1_steps.py" project_01_temp/
+          cp "Project 1/Assignment 3/p1_walk.py" project_01_temp/
+          cp "Project 1/Assignment 4/p1_pythagorean.py" project_01_temp/
+          cp "Project 1/Assignment 5/p1_cement.py" project_01_temp/
+          cp "Project 1/Assignment 6/p1_travel.py" project_01_temp/
+          
+          # Create the zip file
+          cd project_01_temp
+          zip -j ../project_01.zip *.py
+          cd ..
+          
+          # Verify zip contents
+          echo "Zip file created successfully. Contents:"
+          unzip -l project_01.zip
+          
+          # Clean up temp directory
+          rm -rf project_01_temp
+      
+      - name: Upload zip file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: project_01
+          path: project_01.zip
+          retention-days: 30
+      
+      - name: Commit and push zip file (optional)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Check if zip file exists and is different from remote
+          if [ -f project_01.zip ]; then
+            git add project_01.zip
+            git commit -m "Generate project_01.zip with all Python files" || echo "No changes to commit"
+            git push origin main || echo "Could not push (may be read-only)"
+          fi
+        continue-on-error: true
