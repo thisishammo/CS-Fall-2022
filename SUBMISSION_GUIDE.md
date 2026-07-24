@@ -1,6 +1,6 @@
 # Project 1 Submission Guide
 
-This repository contains all Python files for Project 1, along with automated scripts to generate the submission zip file.
+This repository contains all Python files for Project 1, along with multiple methods to generate and download the submission zip file.
 
 ## Deliverables
 
@@ -15,21 +15,56 @@ The `project_01.zip` file contains the following Python files:
 
 **Total Points:** 102 (with 2 extra-credit points possible)
 
+## Quick Start - Web Server (Recommended)
+
+The easiest way to get your zip file ready for submission:
+
+```bash
+./start-server.sh
+```
+
+Then visit **http://localhost:8000** in your browser and click the download button!
+
+### Using a Custom Port
+
+If port 8000 is already in use:
+
+```bash
+./start-server.sh 9000
+```
+
+Then visit **http://localhost:9000**
+
+---
+
 ## How to Generate the Submission Zip File
 
-### Option 1: Automated GitHub Workflow
+### **Option 1: Web Server (EASIEST)** ⭐
 
-The repository includes a GitHub workflow (`.github/workflows/generate-project-zip.yml`) that automatically generates `project_01.zip` whenever changes are pushed to the `main` branch or when manually triggered.
+Start the web server with a beautiful download page:
 
-**To trigger the workflow manually:**
-1. Go to the **Actions** tab on GitHub
-2. Select **Generate Project 01 Zip File**
-3. Click **Run workflow**
-4. Download the generated `project_01.zip` from the artifacts
+```bash
+# Use default port 8000
+python3 submit_server.py
 
-### Option 2: Local Script
+# Or use a custom port
+python3 submit_server.py 9000
+```
 
-Generate the zip file locally using the provided bash script:
+**Features:**
+- Beautiful, responsive web interface
+- One-click download
+- Shows all deliverables with point values
+- Automatic zip generation
+- Download status and instructions
+
+**Browser Access:**
+- `http://localhost:8000`
+- `http://127.0.0.1:8000`
+
+### **Option 2: Local Script**
+
+Generate the zip file locally without a web server:
 
 ```bash
 ./generate-zip.sh
@@ -41,7 +76,17 @@ This will:
 3. Display the zip contents for verification
 4. Clean up temporary files
 
-### Option 3: Manual Creation
+### **Option 3: Automated GitHub Workflow**
+
+The repository includes a GitHub workflow (`.github/workflows/generate-project-zip.yml`) that automatically generates `project_01.zip` whenever changes are pushed to the `main` branch or when manually triggered.
+
+**To trigger the workflow manually:**
+1. Go to the **Actions** tab on GitHub
+2. Select **Generate Project 01 Zip File**
+3. Click **Run workflow**
+4. Download the generated `project_01.zip` from the artifacts
+
+### **Option 4: Manual Creation**
 
 If you prefer to create the zip file manually:
 
@@ -70,18 +115,32 @@ cd "Project 1/Assignment 5" && python test_p1_cement.py
 cd "Project 1/Assignment 6" && python test_p1_travel.py
 ```
 
-## Submission
+All tests should pass before submission!
+
+## Submission Checklist
+
+- [ ] All 6 Python files are present and correctly named
+- [ ] Test cases pass locally
+- [ ] `project_01.zip` contains exactly 6 Python files
+- [ ] Zip file is named exactly `project_01.zip` (CASE-SENSITIVE)
+- [ ] Upload zip file to Canvas **Project 1** assignment
+- [ ] Verify file appears in Canvas submission
+- [ ] Confirm submission before deadline
+
+## Submission to Canvas
 
 1. Generate the `project_01.zip` file using one of the methods above
-2. Upload the zip file to Canvas using the **Project 1 Canvas Assignment**
-3. Verify the file appears in Canvas
-4. Confirm the submission deadline before uploading
+2. Go to Canvas → Your Course → **Project 1** Assignment
+3. Click **Submit Assignment**
+4. Upload the `project_01.zip` file
+5. Click **Submit**
+6. Verify the submission appears in the assignment
 
 **Important Notes:**
-- Submissions are CASE-SENSITIVE (files must be named exactly as specified)
+- Submissions are **CASE-SENSITIVE** (filenames must match exactly)
 - Late submissions are accepted according to the course late policy
 - Automatic grading will be applied after submission
-- You are responsible for submitting before the deadline
+- You are **responsible** for submitting before the deadline
 
 ## File Structure
 
@@ -111,13 +170,65 @@ CS-Fall-2022/
 │   └── workflows/
 │       └── generate-project-zip.yml
 ├── generate-zip.sh
-└── project_01.zip
+├── start-server.sh
+├── submit_server.py
+├── project_01.zip
+└── SUBMISSION_GUIDE.md
+```
+
+## Troubleshooting
+
+### Web Server Issues
+
+**"Address already in use" error:**
+```bash
+# Use a different port
+python3 submit_server.py 9000
+```
+
+**Cannot connect to server:**
+- Try `http://127.0.0.1:8000` instead of `http://localhost:8000`
+- Check firewall settings
+- Ensure port isn't blocked by other applications
+
+**Download doesn't start:**
+- Check browser console for errors
+- Verify `project_01.zip` exists: `ls -la project_01.zip`
+- Restart server and try again
+
+### File Generation Issues
+
+**"File not found" errors:**
+1. Verify all Python files are in correct directories
+2. Check file names are exactly as specified (CASE-SENSITIVE)
+3. Ensure Assignment directories exist
+
+**Script Permission Denied:**
+```bash
+chmod +x generate-zip.sh start-server.sh submit_server.py
+```
+
+**Python Not Found:**
+```bash
+# Check Python is installed
+python3 --version
+
+# Use absolute path if needed
+/usr/bin/python3 submit_server.py
 ```
 
 ## Support
 
-If you encounter any issues:
-1. Verify all Python files are in their correct directories
-2. Ensure the script has execute permissions: `chmod +x generate-zip.sh`
-3. Check that Python files have the exact names specified (CASE-SENSITIVE)
-4. Run the test cases to verify functionality before submission
+If you encounter issues:
+1. Check file permissions: `chmod +x *.sh`
+2. Verify Python 3 is installed: `python3 --version`
+3. Check port availability: `lsof -i :8000`
+4. Verify all Python files exist and are readable
+5. Run test cases to verify functionality
+6. Check submission deadline on Canvas
+
+---
+
+**Last Updated:** July 24, 2026  
+**Python Version Required:** Python 3.6+  
+**No external dependencies required for server**
